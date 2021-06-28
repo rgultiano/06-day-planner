@@ -107,23 +107,19 @@ function generateTimeblocks(start_string, end_string, format){
         // this should prevent any anomolies due to changes in key config variables
         // this should also load the planner_data
         checkAndHandleConfig();
-        //console.log('now: ', MOMENT_NOW.format(), ' || start: ', start.format(), ' || moment(): ',start.clone().add(TIME_BLOCK_INTERVAL, TIME_BLOCK_INTERVAL_UNIT).format())
 
         let time_relevance = -1;
         switch(true){
             case (start.isBefore(MOMENT_NOW) && start.clone().add(TIME_BLOCK_INTERVAL, TIME_BLOCK_INTERVAL_UNIT).isBefore(MOMENT_NOW)):
                 // then in the time in the past
-                console.log('time in past');
                 time_relevance = TIME_PAST;
                 break;
             case (start.isAfter(MOMENT_NOW)):
                 // then time is in future blocks
-                console.log('time in future');
                 time_relevance = TIME_FUTURE;
                 break;
             default:
                 // then time is in the current block
-                console.log('time in present');
                 time_relevance = TIME_PRESENT;
                 break;
         }
@@ -180,10 +176,10 @@ function addTimeblock(time, eventText, timeRelevance)
     elSave.data('saveid', timeToSaveId(time))
 
     //apply the appropriate classes
-    divTimeblock.addClass("tb d-flex row border-0");
-    elTime.addClass("tb-time py-2 col-1 text-right border border-left-0 border-dark");
-    elEvent.addClass("tb-event py-2 col-9 border border-dark");
-    elSave.addClass("tb-save col-1 text-center align-text-center border border-dark rounded-right");
+    divTimeblock.addClass("tb d-flex row  border-0");
+    elTime.addClass("tb-time py-2 col-3 col-sm-2 col-md-1 col-lg-1 text-right border border-left-0 border-dark ");
+    elEvent.addClass("tb-event py-2 col-6 col-sm-6 col-md-9 col-lg-9 border border-dark");
+    elSave.addClass("tb-save col-2 col-sm-2 col-md-2 col-lg-2 text-center align-text-center border border-dark rounded-right");
 
     //color depends on if the item is in the past
     switch(timeRelevance){
@@ -215,6 +211,5 @@ $(document).ready(function() {
     // add event handler to save if a button is clicked
     $(".tb-save").click( function(){
         saveEvent($(this).data('saveid'), $(this).prev('.tb-event').val())
-        console.log('saveid:',$(this).data('saveid'), ' || text', $(this).prev('.tb-event').val())
     });
 });
