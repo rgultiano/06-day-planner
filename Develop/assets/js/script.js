@@ -205,7 +205,12 @@ function addTimeblock(time, eventText, timeRelevance)
 }
 
 $(document).ready(function() {
+    //init timeblocks
     generateTimeblocks(START_OF_DAY, END_OF_DAY, TIME_OF_DAY_FORMAT);
+
+    //load today's date
+    $('#currentDay').text(MOMENT_NOW.format('dddd, MMMM Do'))
+
     // add event handler to save if a button is clicked
     $(".tb-save").click( function(){
         saveEvent($(this).data('saveid'), $(this).prev('.tb-event').val())
