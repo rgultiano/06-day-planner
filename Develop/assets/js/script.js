@@ -51,8 +51,9 @@ function checkAndHandleConfig(){
             config.hasOwnProperty('START_OF_DAY') &&
             config.START_OF_DAY === START_OF_DAY &&
             config.hasOwnProperty('END_OF_DAY') &&
-            config.END_OF_DAY === END_OF_DAY &&
-            config.hasOwnProperty('TIME_OF_DAY_FORMAT') &&
+            // Removed End of day check as this changing shouldn't really break anything
+            //config.END_OF_DAY === END_OF_DAY &&
+            //config.hasOwnProperty('TIME_OF_DAY_FORMAT') &&
             config.TIME_OF_DAY_FORMAT === TIME_OF_DAY_FORMAT &&
             config.hasOwnProperty('TIME_BLOCK_INTERVAL') &&
             config.TIME_BLOCK_INTERVAL === TIME_BLOCK_INTERVAL &&
@@ -76,7 +77,7 @@ function checkAndHandleConfig(){
             // Save current config
             let curr_config = {};
             curr_config.START_OF_DAY = START_OF_DAY;
-            curr_config.END_OF_DAY = END_OF_DAY;
+            //curr_config.END_OF_DAY = END_OF_DAY;
             curr_config.TIME_OF_DAY_FORMAT = TIME_OF_DAY_FORMAT;
             curr_config.TIME_BLOCK_INTERVAL = TIME_BLOCK_INTERVAL;
             curr_config.TIME_BLOCK_INTERVAL_UNIT = TIME_BLOCK_INTERVAL_UNIT;
