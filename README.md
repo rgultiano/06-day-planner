@@ -27,6 +27,23 @@ Project is created with:
 ## Setup
 To run this project, just copy the index.html and assets folder to your webserver.
 
+You can modify some of the config attributes in ordder to give some variance to your schedule. These are found at the top of `assets\js\script.js\`. The default values are:
+```js
+//CONFIG VARIABLES
+//set start and end of day constants for the planner using 24 hours
+const CONF_START_OF_DAY = "9:00 AM"; // beginning time for the planner (inclusive)
+const CONF_END_OF_DAY = "6:00 PM"; // end time for the planner (exclusive. i.e. it won't include this time if it perfectly matches a start of a timeblock)
+const CONF_TIME_OF_DAY_FORMAT = "h:mm A"; // moment format for *_OF_DAY constants
+
+//set visual representation of the label
+const CONF_PLANNER_DISPLAY_FORMAT = "h:mm A"; //note this is not included in the checkAndHandleConfig() check as it's simply visual
+
+const CONF_TIME_BLOCK_INTERVAL = 60; // time block interval 
+const CONF_TIME_BLOCK_INTERVAL_UNIT = 'minutes'; // moment unit for timeblock interval (e.g. 'hours', 'minutes')
+
+const CONF_PLANNER_SAVE_FORMAT = 'x';// moment format used for saving events into local storage
+```
+
 ## User Story
 
 ```md

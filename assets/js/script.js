@@ -2,27 +2,27 @@ const TIME_PAST = 0;
 const TIME_PRESENT = 1;
 const TIME_FUTURE = 2;
 
-const TIMZEONE = "Australia/Melbourne";
-
+//CONFIG VARIABLES
 //set start and end of day constants for the planner using 24 hours
-const START_OF_DAY = "9:00 AM";
-const END_OF_DAY = "11:00 PM";
-const TIME_OF_DAY_FORMAT = "h:mm A"; // moment format for *_OF_DAY constants
-const PLANNER_SAVE_FORMAT = 'x';
-const PLANNER_DISPLAY_FORMAT = "h:mm A"; //note this is not included in the checkAndHandleConfig() check as it's simply visual
+const CONF_START_OF_DAY = "9:00 AM"; // beginning time for the planner (inclusive)
+const CONF_END_OF_DAY = "6:00 PM"; // end time for the planner (exclusive. i.e. it won't include this time if it perfectly matches a start of a timeblock)
+const CONF_TIME_OF_DAY_FORMAT = "h:mm A"; // moment format for *_OF_DAY constants
 
-const TIME_BLOCK_INTERVAL = 60; // time block interval
-const TIME_BLOCK_INTERVAL_UNIT = 'minutes';
+//set visual representation of the label
+const CONF_PLANNER_DISPLAY_FORMAT = "h:mm A"; //note this is not included in the checkAndHandleConfig() check as it's simply visual
 
-const MOMENT_NOW = moment(); // time when script is loaded
+const CONF_TIME_BLOCK_INTERVAL = 60; // time block interval 
+const CONF_TIME_BLOCK_INTERVAL_UNIT = 'minutes'; // moment unit for timeblock interval (e.g. 'hours', 'minutes')
+
+const CONF_PLANNER_SAVE_FORMAT = 'x';// moment format used for saving events into local storage
 
 // local storage config vars
-
 const LS_CONFIG_NAME = 'dayplanner_config';
 const LS_PLANNER_DATA = 'dayplanner_data';
 
-// global var to store planner_data within client memory
-var planner_data = {};
+//global vars
+const MOMENT_NOW = moment(); // time when script is loaded
+var planner_data = {}; // global var to store planner_data within client memory
 
 // set a config_check variable to prevent constant checking of config
 var config_checked = false;
@@ -49,18 +49,18 @@ function checkAndHandleConfig(){
         if(
             config &&
             config.hasOwnProperty('START_OF_DAY') &&
-            config.START_OF_DAY === START_OF_DAY &&
-            config.hasOwnProperty('END_OF_DAY') &&
+            config.START_OF_DAY === CONF_START_OF_DAY &&
             // Removed End of day check as this changing shouldn't really break anything
+            //config.hasOwnProperty('END_OF_DAY') &&
             //config.END_OF_DAY === END_OF_DAY &&
-            //config.hasOwnProperty('TIME_OF_DAY_FORMAT') &&
-            config.TIME_OF_DAY_FORMAT === TIME_OF_DAY_FORMAT &&
+            config.hasOwnProperty('TIME_OF_DAY_FORMAT') &&
+            config.TIME_OF_DAY_FORMAT === CONF_TIME_OF_DAY_FORMAT &&
             config.hasOwnProperty('TIME_BLOCK_INTERVAL') &&
-            config.TIME_BLOCK_INTERVAL === TIME_BLOCK_INTERVAL &&
+            config.TIME_BLOCK_INTERVAL === CONF_TIME_BLOCK_INTERVAL &&
             config.hasOwnProperty('TIME_BLOCK_INTERVAL_UNIT') &&
-            config.TIME_BLOCK_INTERVAL_UNIT === TIME_BLOCK_INTERVAL_UNIT &&
+            config.TIME_BLOCK_INTERVAL_UNIT === CONF_TIME_BLOCK_INTERVAL_UNIT &&
             config.hasOwnProperty('PLANNER_SAVE_FORMAT') &&
-            config.PLANNER_SAVE_FORMAT === PLANNER_SAVE_FORMAT
+            config.PLANNER_SAVE_FORMAT === CONF_PLANNER_SAVE_FORMAT
         ){
             // config matches previous config
             // current imp load the planner_data
@@ -76,12 +76,12 @@ function checkAndHandleConfig(){
 
             // Save current config
             let curr_config = {};
-            curr_config.START_OF_DAY = START_OF_DAY;
+            curr_config.START_OF_DAY = CONF_START_OF_DAY;
             //curr_config.END_OF_DAY = END_OF_DAY;
-            curr_config.TIME_OF_DAY_FORMAT = TIME_OF_DAY_FORMAT;
-            curr_config.TIME_BLOCK_INTERVAL = TIME_BLOCK_INTERVAL;
-            curr_config.TIME_BLOCK_INTERVAL_UNIT = TIME_BLOCK_INTERVAL_UNIT;
-            curr_config.PLANNER_SAVE_FORMAT = PLANNER_SAVE_FORMAT;
+            curr_config.TIME_OF_DAY_FORMAT = CONF_TIME_OF_DAY_FORMAT;
+            curr_config.TIME_BLOCK_INTERVAL = CONF_TIME_BLOCK_INTERVAL;
+            curr_config.TIME_BLOCK_INTERVAL_UNIT = CONF_TIME_BLOCK_INTERVAL_UNIT;
+            curr_config.PLANNER_SAVE_FORMAT = CONF_PLANNER_SAVE_FORMAT;
             window.localStorage.setItem(LS_CONFIG_NAME, JSON.stringify(curr_config));
 
             // save a blank planner data object
@@ -110,7 +110,7 @@ function generateTimeblocks(start_string, end_string, format){
 
         let time_relevance = -1;
         switch(true){
-            case (start.isBefore(MOMENT_NOW) && start.clone().add(TIME_BLOCK_INTERVAL, TIME_BLOCK_INTERVAL_UNIT).isBefore(MOMENT_NOW)):
+            case (start.isBefore(MOMENT_NOW) && start.clone().add(CONF_TIME_BLOCK_INTERVAL, CONF_TIME_BLOCK_INTERVAL_UNIT).isBefore(MOMENT_NOW)):
                 // then in the time in the past
                 time_relevance = TIME_PAST;
                 break;
@@ -127,13 +127,13 @@ function generateTimeblocks(start_string, end_string, format){
         addTimeblock(start, getEventText(timeToSaveId(start)), time_relevance);
 
         // increment start by the timeblock interval
-        start.add(TIME_BLOCK_INTERVAL, TIME_BLOCK_INTERVAL_UNIT);
+        start.add(CONF_TIME_BLOCK_INTERVAL, CONF_TIME_BLOCK_INTERVAL_UNIT);
     }
 
 }
 
 function timeToSaveId(time){
-    return time.format(PLANNER_SAVE_FORMAT);
+    return time.format(CONF_PLANNER_SAVE_FORMAT);
 }
 
 function getEventText(saveId){
@@ -170,15 +170,15 @@ function addTimeblock(time, eventText, timeRelevance)
     const elSave = $("<button>");
     
     // add the text
-    elTime.text(time.format(PLANNER_DISPLAY_FORMAT));
+    elTime.text(time.format(CONF_PLANNER_DISPLAY_FORMAT));
     elEvent.val(eventText);
     elSave.text('Save');
     elSave.data('saveid', timeToSaveId(time))
 
     //apply the appropriate classes
     divTimeblock.addClass("tb d-flex row  border-0");
-    elTime.addClass("tb-time py-2 col-3 col-sm-2 col-md-1 col-lg-1 text-right border border-left-0 border-dark ");
-    elEvent.addClass("tb-event py-2 col-6 col-sm-6 col-md-9 col-lg-9 border border-dark");
+    elTime.addClass("tb-time py-2 col-3 col-sm-2 col-md-2 col-lg-2 text-right border border-left-0 border-dark ");
+    elEvent.addClass("tb-event py-2 col-6 col-sm-6 col-md-8 col-lg-8 border border-dark");
     elSave.addClass("tb-save col-2 col-sm-2 col-md-2 col-lg-2 text-center align-text-center border border-dark rounded-right");
 
     //color depends on if the item is in the past
@@ -203,7 +203,7 @@ function addTimeblock(time, eventText, timeRelevance)
 
 $(document).ready(function() {
     //init timeblocks
-    generateTimeblocks(START_OF_DAY, END_OF_DAY, TIME_OF_DAY_FORMAT);
+    generateTimeblocks(CONF_START_OF_DAY, CONF_END_OF_DAY, CONF_TIME_OF_DAY_FORMAT);
 
     //load today's date
     $('#currentDay').text(MOMENT_NOW.format('dddd, MMMM Do'))
