@@ -94,7 +94,8 @@ function checkAndHandleConfig(){
     
 }
 
-function generateTimeblocks(start_string, end_string, format){
+// function to generate the Timeblocks based off a start and end time string, moment format for parsing, and interval information
+function generateTimeblocks(start_string, end_string, format, interval, interval_unit){
     /*
      * provide inputs to function for easy maintenance and extension
      * in the case of wanting to add multi day support
@@ -110,7 +111,7 @@ function generateTimeblocks(start_string, end_string, format){
 
         let time_relevance = -1;
         switch(true){
-            case (start.isBefore(MOMENT_NOW) && start.clone().add(CONF_TIME_BLOCK_INTERVAL, CONF_TIME_BLOCK_INTERVAL_UNIT).isBefore(MOMENT_NOW)):
+            case (start.isBefore(MOMENT_NOW) && start.clone().add(interval, interval_unit).isBefore(MOMENT_NOW)):
                 // then in the time in the past
                 time_relevance = TIME_PAST;
                 break;
@@ -127,15 +128,17 @@ function generateTimeblocks(start_string, end_string, format){
         addTimeblock(start, getEventText(timeToSaveId(start)), time_relevance);
 
         // increment start by the timeblock interval
-        start.add(CONF_TIME_BLOCK_INTERVAL, CONF_TIME_BLOCK_INTERVAL_UNIT);
+        start.add(interval, interval_unit);
     }
 
 }
 
+// function to convert a time to the saveId to be used
 function timeToSaveId(time){
     return time.format(CONF_PLANNER_SAVE_FORMAT);
 }
 
+// function to retrieve event text from planner data
 function getEventText(saveId){
     if(!planner_data){
         // if planner data is not provided, load from local storage
@@ -147,6 +150,7 @@ function getEventText(saveId){
 
 }
 
+//function to save an event to local storage
 function saveEvent(saveId, text){
     checkAndHandleConfig();
     planner_data[saveId] = text;
@@ -202,8 +206,8 @@ function addTimeblock(time, eventText, timeRelevance)
 }
 
 $(document).ready(function() {
-    //init timeblocks
-    generateTimeblocks(CONF_START_OF_DAY, CONF_END_OF_DAY, CONF_TIME_OF_DAY_FORMAT);
+    //init timeblocks using config values
+    generateTimeblocks(CONF_START_OF_DAY, CONF_END_OF_DAY, CONF_TIME_OF_DAY_FORMAT, CONF_TIME_BLOCK_INTERVAL, CONF_TIME_BLOCK_INTERVAL_UNIT);
 
     //load today's date
     $('#currentDay').text(MOMENT_NOW.format('dddd, MMMM Do'))
